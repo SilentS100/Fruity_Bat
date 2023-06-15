@@ -64,7 +64,7 @@
 		var player_y  = window.innerHeight/2
 		var player_yv = 3
 		var score = 0
-		var fruit_x = 1000
+		var fruit_x = -100
 		var start = false
 		var end = false
 		spike_up.style.top = "1000px"
@@ -81,8 +81,11 @@
 				start = true
 				var player_y  = window.innerHeight/2
 			}
-			animate_bat()
-			player_yv = -5
+			if(!end)
+			{
+				animate_bat()
+				player_yv = -5	
+			}
 			
 		}
 		
@@ -146,7 +149,7 @@
 		{
 			player_y += player_yv
 			player_yv += .1
-			if (player_y < window.innerHeight/2 - 128 * 6 || player_y > window.innerHeight/2 + 128 * 6)
+			if (player_y < window.innerHeight/2 - 500 || player_y > window.innerHeight/2 + 500)
 			{
 				lose()
 			}
@@ -224,14 +227,12 @@
 	}
 	setInterval(function(){
 		var number = Math.random()*100
-		if(number <= 25){
-
-		}
-		else if(number <= 50)
+		
+		if(number <= 33)
 		{
 			spawn_spike_up()
 		}
-		else if(number <= 75)
+		else if(number <= 66)
 		{
 			spawn_spike_down()
 		}
