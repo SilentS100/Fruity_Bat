@@ -16,11 +16,11 @@
 		left: 100px
 	}
 	.spike_down_css{
-		transform: scale(8)  scaleX(-1) rotate(0.25turn);
+		transform: scale(6)  scaleX(-1) rotate(0.25turn);
         position: absolute;
 	}
 	.spike_up_css{
-		transform: scale(8) rotate(0.75turn);
+		transform: scale(6) rotate(0.75turn);
         position: absolute;
 	}
 </style>
@@ -65,16 +65,22 @@
 		var player_yv = 3
 		var score = 0
 		var fruit_x = -100
+		var fruit_y = -100
+		
+		player.style.top = Math.round(player_y) + "px"
+		player.style.left = Math.round(player_x)  + "px"
+		fruit.style.left = Math.round(fruit_x)  + "px"
+
 		var start = false
 		var end = false
 		spike_up.style.top = "1000px"
 		spike_down.style.top = "1000px"
+
 		function keyDownTextField(e) {
 		var keyCode = e.keyCode;
 		
 		
-
-		if(keyCode == 32)
+		if(keyCode == 32 || keyCode == 87 || keyCode == 38 || keyCode == 89)
 		{
 			if(!start)
 			{
@@ -113,10 +119,33 @@
 		*/
 		
 	}
+	function reset()
+	{
+		player_x  = 100
+		player_y  = window.innerHeight/2
+		player_yv = 3
+		score = 0
+		fruit_x = -100
+
+		for(var i = spikes.length - 1; i > -1; i--){
+			var element = spikes[i]
+			element.remove()
+
+		}
+		spikes = []
+
+		player.style.top = player_y + "px"
+		player.style.left = player_x  + "px"
+		fruit.style.left = fruit_x + "px"
+
+		start = false
+		end = false
+		spike_up.style.top = "1000px"
+		spike_down.style.top = "1000px"
+	}
 	function isCollide(a, b) {
 		var aRect = a.getBoundingClientRect();
 		var bRect = b.getBoundingClientRect();
-		console.log(b.id)
 
 		var bLeft = bRect.left
 		var bRight = bRect.right
@@ -149,28 +178,30 @@
 		{
 			player_y += player_yv
 			player_yv += .1
-			if (player_y < window.innerHeight/2 - 500 || player_y > window.innerHeight/2 + 500)
+			if (player_y < window.innerHeight/2 - 320 || player_y > window.innerHeight/2 + 320)
 			{
 				lose()
 			}
 			player.style.top = Math.round(player_y) + "px"
 			player.style.left = Math.round(player_x)  + "px"
 		}
+		if(end && player_y > window.innerHeight/2 + 360)
+		{
+			reset()
+		}
 	},10)
 	function move_element(element)
 	{
 		var rect = element.getBoundingClientRect();
-		console.log(rect.top, rect.right, rect.bottom, rect.left);
 		element.style.left = 1
 	}
 	function reset_fruit()
 	{
-		console.log("fruit_reset")
 		fruit.style.visibility = false
 		fruit_x = window.outerWidth + 30
-		fruit.style.top = Math.random() * (window.outerHeight - 40) + 20  + "px"
-		
-		
+		fruit.style.left = fruit_x + "px"
+		fruit_y = Math.random()*200 + window.outerHeight/2 - 100
+		fruit.style.top = fruit_y
 		fruit.src = "static/fruit_" + Math.round(Math.random()*3) + ".png"
 		fruit.style.visibility = true
 	}
@@ -179,10 +210,14 @@
 			return
 		}
 		fruit_x -= 3
-		fruit.style.left =  fruit_x + "px"
 		
-		if ( fruit_x < -20 ){
-			
+		var fRect = fruit.getBoundingClientRect()
+		console.log(fruit.style.top, fRect.top)
+		fruit.style.left =  fruit_x + "px"
+		fruit.style.top = fruit_y + Math.cos(fruit_x / 50) * 50 + "px" 
+		console.log(fruit.style.top)
+		if ( fruit_x < -20 )
+		{	
 			reset_fruit()
 		}
 		if(isCollide(player, fruit))
@@ -193,9 +228,10 @@
 		for(var i = spikes.length - 1; i > -1; i--){
 			var element = spikes [i]
 			var rect = element.getBoundingClientRect();
-			element.style.left = rect.left + 14 + "px"
+			element.style.left = rect.left - score / 4 - 2 + "px"
 			if(rect.left < -60){
 				spikes.splice(i, 1);
+				element.remove()
 				
 			}
 			if(isCollide(player, element)){
@@ -209,46 +245,66 @@
 		const node = spike_up;
 		const clone = node.cloneNode(true);
 		var lower = 0
-		if(pos == "low")
+		if(pos == "high")
 		{
-			lower = 100
+			lower = 200
 		}
 		document.getElementById("scene").appendChild(clone);
 		clone.style.visibility = true
 		
 		clone.style.left = window.innerWidth + 100 + "px"
-		clone.style.top  = window.innerHeight/2 + Math.random()*300 + pos - 600 + "px"
+		clone.style.top  = window.innerHeight/2 + Math.random()*300 - 400 - lower + "px"
  		spikes.push(clone)
 	}
 	function spawn_spike_down(pos) {
 		const node = spike_down;
 		const clone = node.cloneNode(true);
 		var lower = 0
-		if(pos == "low")
+		if(pos == "high")
 		{
-			lower = 100
+			lower = 200
 		}
 		document.getElementById("scene").appendChild(clone);
 		clone.style.visibility = true
 		clone.style.left = window.innerWidth + 100 + "px"
-		clone.style.top  = window.innerHeight/2 - Math.random()*300 + 600 - lower + "px" 
+		clone.style.top  = window.innerHeight/2 - Math.random() * 300 + 400 + lower + "px" 
 		spikes.push(clone)
+	}
+	function spawn_spike_both()
+	{
+		const clone_down = spike_down.cloneNode(true);
+		const clone_up = spike_up.cloneNode(true);
+		
+		document.getElementById("scene").appendChild(clone_down);
+		document.getElementById("scene").appendChild(clone_up);
+		clone_down.style.visibility = true
+		clone_up.style.visibility = true
+
+		var space  = Math.random() * 50 + 320
+		var height = Math.random() * 400 - 200
+		clone_down.style.left = window.innerWidth + 100 + "px"
+		clone_down.style.top  = window.innerHeight/2 - height + space + "px" 
+		clone_up.style.left   = window.innerWidth + 100 + "px"
+		clone_up.style.top    = window.innerHeight/2 - height - space + "px" 
+		spikes.push(clone_up)
+		spikes.push(clone_down)
 	}
 	setInterval(function(){
 		var number = Math.random()*100
 		
+		spawn_spike_both()
 		if(number <= 33)
 		{
-			spawn_spike_up("low")
+			//spawn_spike_up("low")
 		}
 		else if(number <= 66)
 		{
-			spawn_spike_down("low")
+			//spawn_spike_down("low")
 		}
 		else if(number <= 100)
 		{
-			spawn_spike_up("high")
-			spawn_spike_down("high")
+			//spawn_spike_up("high")
+			//spawn_spike_down("high")
 		}
 	}, 2000);
 	</script>
