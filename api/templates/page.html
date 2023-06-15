@@ -67,8 +67,8 @@
 		var fruit_x = 1000
 		var start = false
 		var end = false
-		spike_up.style.visibility = false
-		spike_down.style.visibility = false
+		spike_up.style.top = "1000px"
+		spike_down.style.top = "1000px"
 		function keyDownTextField(e) {
 		var keyCode = e.keyCode;
 		
@@ -207,6 +207,7 @@
 		const clone = node.cloneNode(true);
 		
 		document.getElementById("scene").appendChild(clone);
+		clone.style.visibility = true
 		clone.style.left = "1100px"
 		clone.style.top  = window.innerHeight/2 + Math.random()*300 - 500 + "px"
  		spikes.push(clone)
@@ -216,6 +217,7 @@
 		const clone = node.cloneNode(true);
 		
 		document.getElementById("scene").appendChild(clone);
+		clone.style.visibility = true
 		clone.style.left = "1100px"
 		clone.style.top  = window.innerHeight/2 - Math.random()*300 + 500 + "px" 
 		spikes.push(clone)
