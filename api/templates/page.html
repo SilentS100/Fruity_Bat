@@ -211,7 +211,8 @@
 		
 		document.getElementById("scene").appendChild(clone);
 		clone.style.visibility = true
-		clone.style.left = "1400px"
+		
+		clone.style.left = window.innerWidth + 100 + "px"
 		clone.style.top  = window.innerHeight/2 + Math.random()*300 - 600 + "px"
  		spikes.push(clone)
 	}
@@ -221,7 +222,7 @@
 		
 		document.getElementById("scene").appendChild(clone);
 		clone.style.visibility = true
-		clone.style.left = "1400px"
+		clone.style.left = window.innerWidth + 100 + "px"
 		clone.style.top  = window.innerHeight/2 - Math.random()*300 + 600 + "px" 
 		spikes.push(clone)
 	}
