@@ -172,6 +172,9 @@
 		fruit.style.visibility = true
 	}
 	setInterval(function(){
+		if(!start || end){
+			return
+		}
 		fruit_x -= 3
 		fruit.style.left =  fruit_x + "px"
 		
