@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<style>
+	.player_css{
+		transform: scale(6) scaleX(-1);
+        position: absolute;
+		
+	}
+	.pixilate{
+		image-rendering: pixelated;
+			image-rendering: -moz-crisp-edges;
+			image-rendering: crisp-edges;
+	}
+	.fruit_css{
+		transform: scale(6);
+        position: absolute;
+		left: 100px
+	}
+	.spike_css{
+		transform: scale(6) rotate(0.25turn);
+        position: absolute;
+	}
+</style>
+<body style="background-color: rgb(64, 47, 71); position: fixed;"></body>
+<html>
+	
+	<div>     
+		<img id="player" class="player_css pixilate" src="{{ url_for('static',filename='bat_0.png') }}">         
+	</div>
+
+	<div>     
+		<img id="fruit" class="fruit_css pixilate" src="{{ url_for('static',filename='fruit_0.png') }}">       
+	</div>
+
+	<div id="scene">     
+		<img id="spike_up" class="spike_css pixilate" src="{{ url_for('static',filename='spike.png') }}">       
+		<img id="spike_down" class="spike_css pixilate" src="{{ url_for('static',filename='spike.png') }}">       
+	</div>
+
+	<script>
+		function animate_bat()
+		{
+			player.src = "{{ url_for('static',filename='bat_1.png') }}"
+			setTimeout(function(){
+				player.src = "{{ url_for('static',filename='bat_2.png') }}"
+			}, 100)
+			setTimeout(function(){
+				player.src = "{{ url_for('static',filename='bat_1.png') }}"
+			}, 400)
+			setTimeout(function(){
+				player.src = "{{ url_for('static',filename='bat_0.png') }}"
+			}, 500)
+		}
+		document.addEventListener("keydown", keyDownTextField, false);
+		const player    = document.getElementById('player');
+		const fruit     = document.getElementById('fruit')
+		const spike_up  = document.getElementById('spike_up')
+		const spike_down  = document.getElementById('spike_down')
+		var spikes = []
+		var player_x  = 100
+		var player_y  = 0
+		var player_yv = 0
+
+		var fruit_x = 1000
+		
+		
+		function keyDownTextField(e) {
+		var keyCode = e.keyCode;
+		
+		
+
+		if(keyCode == 32)
+		{
+			animate_bat()
+			player_yv = -5
+		}
+		
+		/*
+		//up
+		if(keyCode==38) 
+		{
+			player_y -= 10
+		} 
+		//down
+		if(keyCode==40) 
+		{
+			player_y += 10
+		}
+		//left
+		if(keyCode==37) 
+		{
+			player_x -= 10	
+		}
+		//right
+		if(keyCode==39) 
+		{
+			player_x += 10
+		}
+		*/
+		
+	}
+	function isCollide(a, b) {
+		var aRect = a.getBoundingClientRect();
+		var bRect = b.getBoundingClientRect();
+
+		return ( (aRect.top - bRect.top)**2 + (aRect.left - bRect.left)**2 < 4000 )
+	}
+	setInterval(function(){
+		player_y += player_yv
+		player_yv += .1
+		if (player_y < 15)
+		{
+			player_y = 10
+		}
+		player.style.top = Math.round(player_y) + "px"
+		player.style.left = Math.round(player_x)  + "px"
+		
+	},10)
+	function move_element(element)
+	{
+		var rect = element.getBoundingClientRect();
+		console.log(rect.top, rect.right, rect.bottom, rect.left);
+		element.style.left = 10
+	}
+	function reset_fruit()
+	{
+		fruit_x = window.outerWidth + 30
+		fruit.style.top = Math.random() * (window.outerHeight - 40) + 20  + "px"
+		
+		
+		fruit.src = "static/fruit_" + Math.round(Math.random()*3) + ".png"
+	}
+	setInterval(function(){
+		fruit_x -= 3
+		fruit.style.left =  fruit_x + "px"
+		
+		if ( fruit_x < -20 ){
+			
+			reset_fruit()
+		}
+		if(isCollide(player, fruit))
+		{
+			reset_fruit()
+		}
+		spikes.forEach(function(element){
+			var rect = element.getBoundingClientRect();
+			element.style.left = rect.left - 10 + "px"
+		})
+	},10)
+
+	function spawn_spike_up() {
+		const node = spike_up;
+		const clone = node.cloneNode(true);
+		
+		document.getElementById("scene").appendChild(clone);
+		clone.style.left = "1300px"
+		clone.style.top  = "0px"
+		spikes.push(clone)
+	}
+	function spawn_spike_down() {
+		const node = spike_down;
+		const clone = node.cloneNode(true);
+		
+		document.getElementById("scene").appendChild(clone);
+		clone.style.left = "1300px"
+		clone.style.top  = "550px"
+		spikes.push(clone)
+	}
+	setInterval(function(){
+		var number = Math.random()*100
+		if(number <= 25){
+
+		}
+		else if(number <= 50)
+		{
+			spawn_spike_up()
+		}
+		else if(number <= 75)
+		{
+			spawn_spike_down()
+		}
+		else if(number <= 100)
+		{
+			spawn_spike_up()
+			spawn_spike_down()
+		}
+	}, 2000);
+	</script>
+</html>
