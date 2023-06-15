@@ -15,8 +15,12 @@
         position: absolute;
 		left: 100px
 	}
-	.spike_css{
-		transform: scale(6) rotate(0.25turn);
+	.spike_down_css{
+		transform: scale(8)  scaleX(-1) rotate(0.25turn);
+        position: absolute;
+	}
+	.spike_up_css{
+		transform: scale(8) rotate(0.75turn);
         position: absolute;
 	}
 </style>
@@ -32,8 +36,8 @@
 	</div>
 
 	<div id="scene">     
-		<img id="spike_up" class="spike_css pixilate" src="{{ url_for('static',filename='spike.png') }}">       
-		<img id="spike_down" class="spike_css pixilate" src="{{ url_for('static',filename='spike.png') }}">       
+		<img id="spike_up" class="spike_up_css pixilate rotated" src="{{ url_for('static',filename='spike.png') }}">       
+		<img id="spike_down" class="spike_down_css pixilate" src="{{ url_for('static',filename='spike.png') }}">       
 	</div>
 
 	<script>
@@ -57,12 +61,14 @@
 		const spike_down  = document.getElementById('spike_down')
 		var spikes = []
 		var player_x  = 100
-		var player_y  = 0
-		var player_yv = 0
-
+		var player_y  = window.innerHeight/2
+		var player_yv = 3
+		var score = 0
 		var fruit_x = 1000
-		
-		
+		var start = false
+		var end = false
+		spike_up.style.left = "-350px"
+		spike_down.style.left = "-350px"
 		function keyDownTextField(e) {
 		var keyCode = e.keyCode;
 		
@@ -70,8 +76,14 @@
 
 		if(keyCode == 32)
 		{
+			if(!start)
+			{
+				start = true
+				var player_y  = window.innerHeight/2
+			}
 			animate_bat()
 			player_yv = -5
+			
 		}
 		
 		/*
@@ -101,33 +113,63 @@
 	function isCollide(a, b) {
 		var aRect = a.getBoundingClientRect();
 		var bRect = b.getBoundingClientRect();
+		console.log(b.id)
 
-		return ( (aRect.top - bRect.top)**2 + (aRect.left - bRect.left)**2 < 4000 )
+		var bLeft = bRect.left
+		var bRight = bRect.right
+		if(b.id == "spike_up" || b.id == "spike_down")
+		{
+			bLeft  = bRect.left + 40
+			bRight = bRect.right - 40
+			
+		}
+		var reduce = 30
+		return !((aRect.bottom - reduce < bRect.top) ||
+		(aRect.top + reduce > bRect.bottom) ||
+		(aRect.right - reduce < bLeft) ||
+		(aRect.left + reduce > bRight))
+		
+		
+
+	}
+	function lose()
+	{
+		if(!end)
+		{
+			alert("you ate " + score + " fruits")
+			end = true
+		}
 	}
 	setInterval(function(){
-		player_y += player_yv
-		player_yv += .1
-		if (player_y < 15)
+
+		if(start)
 		{
-			player_y = 10
+			player_y += player_yv
+			player_yv += .1
+			if (player_y < window.innerHeight/2 - 128 * 6 || player_y > window.innerHeight/2 + 128 * 6)
+			{
+				lose()
+			}
+			player.style.top = Math.round(player_y) + "px"
+			player.style.left = Math.round(player_x)  + "px"
 		}
-		player.style.top = Math.round(player_y) + "px"
-		player.style.left = Math.round(player_x)  + "px"
-		
 	},10)
 	function move_element(element)
 	{
 		var rect = element.getBoundingClientRect();
 		console.log(rect.top, rect.right, rect.bottom, rect.left);
-		element.style.left = 10
+		element.style.left = 1
 	}
 	function reset_fruit()
 	{
+		console.log("fruit_reset")
+		fruit.style.visibility = false
 		fruit_x = window.outerWidth + 30
 		fruit.style.top = Math.random() * (window.outerHeight - 40) + 20  + "px"
 		
 		
 		fruit.src = "static/fruit_" + Math.round(Math.random()*3) + ".png"
+		fruit.style.visibility = true
 	}
 	setInterval(function(){
 		fruit_x -= 3
@@ -139,12 +181,22 @@
 		}
 		if(isCollide(player, fruit))
 		{
+			score += 1
 			reset_fruit()
 		}
-		spikes.forEach(function(element){
+		for(var i = spikes.length - 1; i > -1; i--){
+			var element = spikes [i]
 			var rect = element.getBoundingClientRect();
-			element.style.left = rect.left - 10 + "px"
-		})
+			element.style.left = rect.left + 14 + "px"
+			if(rect.left < -60){
+				spikes.splice(i, 1);
+				
+			}
+			if(isCollide(player, element)){
+				lose()
+			}
+		}
+		
 	},10)
 
 	function spawn_spike_up() {
@@ -152,17 +204,17 @@
 		const clone = node.cloneNode(true);
 		
 		document.getElementById("scene").appendChild(clone);
-		clone.style.left = "1300px"
-		clone.style.top  = "0px"
-		spikes.push(clone)
+		clone.style.left = "1100px"
+		clone.style.top  = window.innerHeight/2 + Math.random()*300 - 500 + "px"
+ 		spikes.push(clone)
 	}
 	function spawn_spike_down() {
 		const node = spike_down;
 		const clone = node.cloneNode(true);
 		
 		document.getElementById("scene").appendChild(clone);
-		clone.style.left = "1300px"
-		clone.style.top  = "550px"
+		clone.style.left = "1100px"
+		clone.style.top  = window.innerHeight/2 - Math.random()*300 + 500 + "px" 
 		spikes.push(clone)
 	}
 	setInterval(function(){
