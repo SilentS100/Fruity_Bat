@@ -49,6 +49,8 @@
 	<div id="scene">     
 		<img id="wall_up" class="pixilate wall_css" src="{{ url_for('static',filename='block.png') }}">
 		<img id="wall_down" class="pixilate wall_css" src="{{ url_for('static',filename='block.png') }}">
+		<img id="wall_up2" class="pixilate wall_css" src="{{ url_for('static',filename='block.png') }}">
+		<img id="wall_down2" class="pixilate wall_css" src="{{ url_for('static',filename='block.png') }}">
 		
 		<img id="spike_up" class="spike_up_css pixilate rotated" src="{{ url_for('static',filename='spike.png') }}">       
 		<img id="spike_down" class="spike_down_css pixilate" src="{{ url_for('static',filename='spike.png') }}">
@@ -78,10 +80,17 @@
 		const spike_down  = document.getElementById('spike_down')
 		const wall_up  = document.getElementById('wall_up')
 		const wall_down  = document.getElementById('wall_down')
+		const wall_up2  = document.getElementById('wall_up2')
+		const wall_down2  = document.getElementById('wall_down2')
+		
 		wall_up.style.top =  window.innerHeight/2 - 630 + "px"
 		wall_down.style.top =  window.innerHeight/2 + 650 + "px"
 		wall_up.style.left   =  "0px"
 		wall_down.style.left =  "0px"
+		wall_up2.style.top =  window.innerHeight/2 - 630 + "px"
+		wall_down2.style.top =  window.innerHeight/2 + 650 + "px"
+		wall_up2.style.left   =  "600px"
+		wall_down2.style.left =  "600px"
 		
 		var spikes = []
 		var player_x  = 100
