@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <style>
 	.player_css{
-		transform: scale(6) scaleX(-1);
+		transform: scale(4);
         position: absolute;
 		
 	}
@@ -23,12 +23,17 @@
 		transform: scale(6) rotate(0.75turn);
         position: absolute;
 	}
+	.hitbox{
+		position: absolute;
+		
+	}
 </style>
 <body style="background-color: rgb(64, 47, 71); position: fixed;"></body>
 <html>
 	
 	<div>     
-		<img id="player" class="player_css pixilate" src="{{ url_for('static',filename='bat_0.png') }}">         
+		<img id="player_hitbox" class="hitbox pixilate" src="{{ url_for('static',filename='bat_frame_0.png') }}">        
+		<img id="player" class="player_css pixilate" src="{{ url_for('static',filename='bat_frame_0.png') }}">         
 	</div>
 
 	<div>     
@@ -37,25 +42,27 @@
 
 	<div id="scene">     
 		<img id="spike_up" class="spike_up_css pixilate rotated" src="{{ url_for('static',filename='spike.png') }}">       
-		<img id="spike_down" class="spike_down_css pixilate" src="{{ url_for('static',filename='spike.png') }}">       
+		<img id="spike_down" class="spike_down_css pixilate" src="{{ url_for('static',filename='spike.png') }}">
+		       
 	</div>
 
 	<script>
 		function animate_bat()
 		{
-			player.src = "{{ url_for('static',filename='bat_1.png') }}"
+			player.src = "{{ url_for('static',filename='bat_frame_0.png') }}"
 			setTimeout(function(){
-				player.src = "{{ url_for('static',filename='bat_2.png') }}"
+				player.src = "{{ url_for('static',filename='bat_frame_2.png') }}"
 			}, 100)
 			setTimeout(function(){
-				player.src = "{{ url_for('static',filename='bat_1.png') }}"
+				player.src = "{{ url_for('static',filename='bat_frame_1.png') }}"
 			}, 400)
 			setTimeout(function(){
-				player.src = "{{ url_for('static',filename='bat_0.png') }}"
+				player.src = "{{ url_for('static',filename='bat_frame_0.png') }}"
 			}, 500)
 		}
 		document.addEventListener("keydown", keyDownTextField, false);
 		const player    = document.getElementById('player');
+		const player_hitbox    = document.getElementById('player_hitbox');
 		const fruit     = document.getElementById('fruit')
 		const spike_up  = document.getElementById('spike_up')
 		const spike_down  = document.getElementById('spike_down')
@@ -133,9 +140,12 @@
 
 		}
 		spikes = []
-
+		
 		player.style.top = player_y + "px"
 		player.style.left = player_x  + "px"
+
+		
+		
 		fruit.style.left = fruit_x + "px"
 
 		start = false
@@ -184,11 +194,16 @@
 			}
 			player.style.top = Math.round(player_y) + "px"
 			player.style.left = Math.round(player_x)  + "px"
+
+			player_hitbox.style.top =  player_y + 10 + "px"
+			player_hitbox.style.left = player_x + 25 + "px"
 		}
 		if(end && player_y > window.innerHeight/2 + 360)
 		{
 			reset()
 		}
+		
+
 	},10)
 	function move_element(element)
 	{
@@ -212,15 +227,13 @@
 		fruit_x -= 3
 		
 		var fRect = fruit.getBoundingClientRect()
-		console.log(fruit.style.top, fRect.top)
 		fruit.style.left =  fruit_x + "px"
 		fruit.style.top = fruit_y + Math.cos(fruit_x / 50) * 50 + "px" 
-		console.log(fruit.style.top)
 		if ( fruit_x < -20 )
 		{	
 			reset_fruit()
 		}
-		if(isCollide(player, fruit))
+		if(isCollide(player_hitbox, fruit))
 		{
 			score += 1
 			reset_fruit()
@@ -234,7 +247,7 @@
 				element.remove()
 				
 			}
-			if(isCollide(player, element)){
+			if(isCollide(player_hitbox, element)){
 				lose()
 			}
 		}
@@ -289,7 +302,7 @@
 		spikes.push(clone_up)
 		spikes.push(clone_down)
 	}
-	setInterval(function(){
+	/*setInterval(function(){
 		var number = Math.random()*100
 		
 		spawn_spike_both()
@@ -306,6 +319,15 @@
 			//spawn_spike_up("high")
 			//spawn_spike_down("high")
 		}
-	}, 2000);
+	}, 3000 - score * 1000 );
+	*/
+	var spawn_spike_helper = function() {
+		spawn_spike_both()
+		var timeout = 1000 / (Math.sqrt(score/16 + .1)) + 400
+		console.log(timeout)
+		setTimeout(spawn_spike_helper, timeout);
+	}
+	setTimeout(spawn_spike_helper, 3000);
 	</script>
 </html>
+
