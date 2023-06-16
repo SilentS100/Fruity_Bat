@@ -25,6 +25,8 @@
 	}
 	.hitbox{
 		position: absolute;
+		transform: scale(.8);
+		visibility: hidden;
 		
 	}
 </style>
@@ -49,16 +51,17 @@
 	<script>
 		function animate_bat()
 		{
-			player.src = "{{ url_for('static',filename='bat_frame_0.png') }}"
+			player.src = "{{ url_for('static',filename='bat_frame_1.png') }}"
+
 			setTimeout(function(){
 				player.src = "{{ url_for('static',filename='bat_frame_2.png') }}"
 			}, 100)
 			setTimeout(function(){
 				player.src = "{{ url_for('static',filename='bat_frame_1.png') }}"
-			}, 400)
+			}, 500)
 			setTimeout(function(){
 				player.src = "{{ url_for('static',filename='bat_frame_0.png') }}"
-			}, 500)
+			}, 600)
 		}
 		document.addEventListener("keydown", keyDownTextField, false);
 		const player    = document.getElementById('player');
@@ -128,6 +131,7 @@
 	}
 	function reset()
 	{
+		player.style.transform = "scale(4)";
 		player_x  = 100
 		player_y  = window.innerHeight/2
 		player_yv = 3
@@ -178,7 +182,18 @@
 	{
 		if(!end)
 		{
-			alert("you ate " + score + " fruits")
+			player.style.transform = "scale(4) scaleY(-1)";
+			if(score === 0)
+			{
+				alert("how?")
+			}
+			else if(score == 1)
+			{
+				alert("you ate " + score + " fruit")
+			}
+			else{
+
+			}
 			end = true
 		}
 	}
@@ -323,7 +338,7 @@
 	*/
 	var spawn_spike_helper = function() {
 		spawn_spike_both()
-		var timeout = 1000 / (Math.sqrt(score/16 + .1)) + 400
+		var timeout = 1000 / (Math.sqrt(score/10 + .1)) + 400
 		console.log(timeout)
 		setTimeout(spawn_spike_helper, timeout);
 	}
