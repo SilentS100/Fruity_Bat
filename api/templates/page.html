@@ -29,6 +29,10 @@
 		visibility: hidden;
 		
 	}
+	.wall_css{
+		position: absolute;
+		transform: scale(20);
+	}
 </style>
 <body style="background-color: rgb(64, 47, 71); position: fixed;"></body>
 <html>
@@ -43,9 +47,12 @@
 	</div>
 
 	<div id="scene">     
+		<img id="wall_up" class="pixilate wall_css" src="{{ url_for('static',filename='block.png') }}">
+		<img id="wall_down" class="pixilate wall_css" src="{{ url_for('static',filename='block.png') }}">
+		
 		<img id="spike_up" class="spike_up_css pixilate rotated" src="{{ url_for('static',filename='spike.png') }}">       
 		<img id="spike_down" class="spike_down_css pixilate" src="{{ url_for('static',filename='spike.png') }}">
-		       
+		
 	</div>
 
 	<script>
@@ -69,6 +76,11 @@
 		const fruit     = document.getElementById('fruit')
 		const spike_up  = document.getElementById('spike_up')
 		const spike_down  = document.getElementById('spike_down')
+		const wall_up  = document.getElementById('wall_up')
+		const wall_down  = document.getElementById('wall_down')
+		wall_up.style.top =  window.innerHeight/2 - 630 + "px"
+		wall_down.style.top =  window.innerHeight/2 + 650 + "px"
+		
 		var spikes = []
 		var player_x  = 100
 		var player_y  = window.innerHeight/2
@@ -80,11 +92,12 @@
 		player.style.top = Math.round(player_y) + "px"
 		player.style.left = Math.round(player_x)  + "px"
 		fruit.style.left = Math.round(fruit_x)  + "px"
-
+		
+		
 		var start = false
 		var end = false
-		spike_up.style.top = "1000px"
-		spike_down.style.top = "1000px"
+		spike_up.style.left = "-2000px"
+		spike_down.style.left = "-2000px"
 
 		function keyDownTextField(e) {
 		var keyCode = e.keyCode;
@@ -192,7 +205,7 @@
 				alert("you ate " + score + " fruit")
 			}
 			else{
-
+				alert("you ate " + score + " fruits")
 			}
 			end = true
 		}
