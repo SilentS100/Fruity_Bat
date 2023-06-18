@@ -32,6 +32,7 @@
 	.wall_css{
 		position: absolute;
 		transform: scale(20);
+		z-index: 10;
 	}
 	.para_0_css{
 		transform: scale(20) scaleY(2);
@@ -63,6 +64,10 @@
 		<img id="wall_down" class="pixilate wall_css" src="{{ url_for('static',filename='block.png') }}">
 		<img id="wall_up2" class="pixilate wall_css" src="{{ url_for('static',filename='block.png') }}">
 		<img id="wall_down2" class="pixilate wall_css" src="{{ url_for('static',filename='block.png') }}">
+		
+		<img id="wall_left" class="pixilate wall_css" src="{{ url_for('static',filename='block.png') }}">
+		<img id="wall_right" class="pixilate wall_css" src="{{ url_for('static',filename='block.png') }}">
+		
 		<img id="para_up_0" class="pixilate para_0_css" src="{{ url_for('static',filename='grounds.png') }}">
 		<img id="para_up_1" class="pixilate para_1_css" src="{{ url_for('static',filename='grounds.png') }}">
 		<img id="para_up_2" class="pixilate para_2_css" src="{{ url_for('static',filename='grounds.png') }}">
@@ -109,6 +114,8 @@
 		const wall_down  = document.getElementById('wall_down')
 		const wall_up2  = document.getElementById('wall_up2')
 		const wall_down2  = document.getElementById('wall_down2')
+		const wall_left  = document.getElementById('wall_left')
+		const wall_right  = document.getElementById('wall_right')
 		
 		
 		const para_up_0  = document.getElementById('para_up_0')
@@ -127,6 +134,15 @@
 		wall_up2.style.left   =  "600px"
 		wall_down2.style.left =  "600px"
 		
+		
+		wall_left.style.transform = "scaleY(100) scaleX(3)"
+		wall_left.style.left = window.innerWidth/2 - 1150 + "px"
+		wall_left.style.top = window.innerHeight/2 - 500 + "px"
+		
+		wall_right.style.transform = "scaleY(100) scaleX(3)"
+		wall_right.style.left = window.innerWidth/2 + 850 + "px"
+		wall_right.style.top = window.innerHeight/2 - 500 + "px"
+		
 		para_up_0.style.top =  window.innerHeight/2 + 300 + "px"
 		para_up_1.style.top =  window.innerHeight/2 + 150 + "px"
 		para_up_2.style.top =  window.innerHeight/2 - 0 + "px"
@@ -139,17 +155,16 @@
 		para_down_1.style.transform =  "scale(15) scaleY(2) rotate(180deg)";
 		para_down_2.style.transform =  "scale(10) scaleY(2) rotate(180deg)";
 
+		para_up_0.style.left = window.innerWidth/2 - 800 - Math.random()*800 + "px";
+		para_up_1.style.left = window.innerWidth/2 - 800 - Math.random()*800 + "px";
+		para_up_2.style.left = window.innerWidth/2 - 800 - Math.random()*800 + "px";
 		
-		para_up_0.style.left = -Math.random()*800 + "px";
-		para_up_1.style.left = -Math.random()*800 + "px";
-		para_up_2.style.left = -Math.random()*800 + "px";
-		
-		para_down_0.style.left = -Math.random()*800 + "px";
-		para_down_1.style.left = -Math.random()*800 + "px";
-		para_down_2.style.left = -Math.random()*800 + "px";
+		para_down_0.style.left = window.innerWidth/2 - 800 - Math.random()*800 + "px";
+		para_down_1.style.left = window.innerWidth/2 - 800 - Math.random()*800 + "px";
+		para_down_2.style.left = window.innerWidth/2 - 800 - Math.random()*800 + "px";
 		
 		var spikes = []
-		var player_x  = 100
+		var player_x  = window.innerWidth/2 - 400
 		var player_y  = window.innerHeight/2
 		var player_yv = 3
 		var score = 0
@@ -212,7 +227,6 @@
 	function reset()
 	{
 		player.style.transform = "scale(4)";
-		player_x  = 100
 		player_y  = window.innerHeight/2
 		player_yv = 3
 		score = 0
