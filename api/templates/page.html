@@ -21,13 +21,13 @@
 		left: 100px;
 	}
 	.spike_down_css{
-		-webkit-transform: scaleY(6) scaleX(-12) rotate(0.25turn) ;
-        transform: scaleY(6) scaleX(-12) rotate(0.25turn) ;
+		-webkit-transform: scale(6);
+        transform: scale(6);
         position: absolute;
 	}
 	.spike_up_css{
-		-webkit-transform: scaleY(6) scaleX(12) rotate(0.75turn);
-        transform: scaleY(6) scaleX(12) rotate(0.75turn);
+		-webkit-transform: scale(6) scaleY(-1);
+        transform: scale(6) scaleY(-1);
         position: absolute;
 	}
 	.hitbox{
@@ -375,7 +375,8 @@
 		for(var i = spikes.length - 1; i > -1; i--){
 			var element = spikes[i]
 			var rect = element.getBoundingClientRect();
-			element.style.left = rect.left + 44 - score/4+ "px"
+			console.log(rect.left, element.style.left)
+			element.style.left = rect.left + 32 - score / 4 - 2 + "px"
 			
 			if(rect.left < window.innerWidth/2 - 960){
 				spikes.splice(i, 1);
