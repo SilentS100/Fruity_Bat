@@ -1,5 +1,10 @@
 <!DOCTYPE html>
+
+<link href="https://fonts.cdnfonts.com/css/common-pixel" rel="stylesheet">
+                
 <style>
+	@import url('https://fonts.cdnfonts.com/css/common-pixel');
+	
 	.player_css{
 		transform: scale(4);
         position: absolute;
@@ -13,14 +18,14 @@
 	.fruit_css{
 		transform: scale(6);
         position: absolute;
-		left: 100px
+		left: 100px;
 	}
 	.spike_down_css{
-		transform: scale(6)  scaleX(-1) rotate(0.25turn);
+		transform: scale(6) scaleX(-2) rotate(0.25turn) ;
         position: absolute;
 	}
 	.spike_up_css{
-		transform: scale(6) rotate(0.75turn);
+		transform: scale(6) scaleX(2) rotate(0.75turn);
         position: absolute;
 	}
 	.hitbox{
@@ -54,6 +59,15 @@
 	{
 		transform: scaleY(-1);
 	}
+	.score_css{
+		transform: scale(15);
+		position: absolute;
+		color: rgba(34, 3, 66, 0.507);
+		text-align: center;
+		align-content: center;
+		font-family: 'Common Pixel', sans-serif;
+		                                           
+	}
 </style>
 <body style="background-color: rgb(14, 5, 17); position: fixed;"></body>
 <html>
@@ -78,6 +92,7 @@
 		<img id="spike_up" class="spike_up_css pixilate" src="{{ url_for('static',filename='spike.png') }}">       
 		<img id="spike_down" class="spike_down_css pixilate" src="{{ url_for('static',filename='spike.png') }}">
 		
+		<p id="score" class="score_css">0</p>
 	</div>
 
 	<div>     
@@ -117,7 +132,8 @@
 		const wall_left  = document.getElementById('wall_left')
 		const wall_right  = document.getElementById('wall_right')
 		
-		
+		const score_text  = document.getElementById('score')
+
 		const para_up_0  = document.getElementById('para_up_0')
 		const para_up_1  = document.getElementById('para_up_1')
 		const para_up_2  = document.getElementById('para_up_2')
@@ -171,6 +187,8 @@
 		var fruit_x = -100
 		var fruit_y = -100
 		
+		score_text.style.left = window.innerWidth/2 + 200 + "px"
+		score_text.style.top = window.innerHeight/2 - 30 + "px"
 		player.style.top = Math.round(player_y) + "px"
 		player.style.left = Math.round(player_x)  + "px"
 		fruit.style.left = Math.round(fruit_x)  + "px"
@@ -191,6 +209,7 @@
 			{
 				start = true
 				var player_y  = window.innerHeight/2
+				score_text.textContent = score
 			}
 			if(!end)
 			{
@@ -228,10 +247,10 @@
 	{
 		player.style.transform = "scale(4)";
 		player_y  = window.innerHeight/2
-		player_yv = 3
+		player_yv = -5
 		score = 0
 		fruit_x = -100
-
+		
 		for(var i = spikes.length - 1; i > -1; i--){
 			var element = spikes[i]
 			element.remove()
@@ -277,17 +296,7 @@
 		if(!end)
 		{
 			player.style.transform = "scale(4) scaleY(-1)";
-			if(score === 0)
-			{
-				alert("you got no fruits")
-			}
-			else if(score == 1)
-			{
-				alert("you ate " + score + " fruit")
-			}
-			else{
-				alert("you ate " + score + " fruits")
-			}
+			player_yv = -5
 			end = true
 		}
 	}
@@ -309,6 +318,19 @@
 		}
 		if(end && player_y > window.innerHeight/2 + 360)
 		{
+			/*
+			if(score === 0)
+			{
+				alert("you got no fruits")
+			}
+			else if(score == 1)
+			{
+				alert("you ate " + score + " fruit")
+			}
+			else{
+				alert("you ate " + score + " fruits")
+			}
+			*/
 			reset()
 		}
 		
@@ -345,13 +367,15 @@
 		if(isCollide(player_hitbox, fruit))
 		{
 			score += 1
+			score_text.textContent = score
 			reset_fruit()
 		}
 		for(var i = spikes.length - 1; i > -1; i--){
-			var element = spikes [i]
+			var element = spikes[i]
 			var rect = element.getBoundingClientRect();
-			element.style.left = rect.left - score / 4 - 2 + "px"
-			if(rect.left < -60){
+			element.style.left = rect.left + 44 - score/4+ "px"
+			
+			if(rect.left < window.innerWidth/2 - 960){
 				spikes.splice(i, 1);
 				element.remove()
 				
@@ -390,35 +414,7 @@
 		
 	},10)
 
-	function spawn_spike_up(pos) {
-		const node = spike_up;
-		const clone = node.cloneNode(true);
-		var lower = 0
-		if(pos == "high")
-		{
-			lower = 200
-		}
-		document.getElementById("scene").appendChild(clone);
-		clone.style.visibility = true
-		
-		clone.style.left = window.innerWidth + 100 + "px"
-		clone.style.top  = window.innerHeight/2 + Math.random()*300 - 400 - lower + "px"
- 		spikes.push(clone)
-	}
-	function spawn_spike_down(pos) {
-		const node = spike_down;
-		const clone = node.cloneNode(true);
-		var lower = 0
-		if(pos == "high")
-		{
-			lower = 200
-		}
-		document.getElementById("scene").appendChild(clone);
-		clone.style.visibility = true
-		clone.style.left = window.innerWidth + 100 + "px"
-		clone.style.top  = window.innerHeight/2 - Math.random() * 300 + 400 + lower + "px" 
-		spikes.push(clone)
-	}
+	
 	function spawn_spike_both()
 	{
 		const clone_down = spike_down.cloneNode(true);
@@ -429,11 +425,11 @@
 		clone_down.style.visibility = true
 		clone_up.style.visibility = true
 
-		var space  = Math.random() * 50 + 320
-		var height = Math.random() * 400 - 200
-		clone_down.style.left = window.innerWidth + 100 + "px"
+		var space  = Math.random() * 80 + 300 
+		var height = Math.random() * 440 - 220
+		clone_down.style.left = window.innerWidth /2 + 800 + Math.random() * 100 - 50 + "px"
 		clone_down.style.top  = window.innerHeight/2 - height + space + "px" 
-		clone_up.style.left   = window.innerWidth + 100 + "px"
+		clone_up.style.left   = window.innerWidth /2 + 800 + "px"
 		clone_up.style.top    = window.innerHeight/2 - height - space + "px" 
 		spikes.push(clone_up)
 		spikes.push(clone_down)
@@ -458,9 +454,11 @@
 	}, 3000 - score * 1000 );
 	*/
 	var spawn_spike_helper = function() {
-		spawn_spike_both()
+		if(start)
+		{
+			spawn_spike_both()
+		}
 		var timeout = 1000 / (Math.sqrt(score/10 + .1)) + 400
-		console.log(timeout)
 		setTimeout(spawn_spike_helper, timeout);
 	}
 	setTimeout(spawn_spike_helper, 3000);
