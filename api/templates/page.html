@@ -110,7 +110,12 @@
 
 	<script>
 		function animate_bat()
-		{
+		{	
+			if(flapping)
+			{
+				return;
+			}
+			flapping = true
 			player.style.visibility = "hidden"
 			player_frame_1.style.visibility = "visible"
 			
@@ -124,9 +129,11 @@
 					setTimeout(function(){
 						player_frame_1.style.visibility = "hidden"
 						player.style.visibility = "visible"
-					}, 100)		
-				}, 400)
-			}, 100)
+						
+						flapping = false
+					}, 70)		
+				}, 200)
+			}, 70)
 			
 		}
 		document.addEventListener("keydown", keyDownTextField, false);
@@ -200,7 +207,7 @@
 		var score = 0
 		var fruit_x = -100
 		var fruit_y = -100
-		
+		var flapping = false
 		score_text.style.left = window.innerWidth/2 + 200 + "px"
 		score_text.style.top = window.innerHeight/2 - 30 + "px"
 		player.style.top = Math.round(player_y) + "px"
