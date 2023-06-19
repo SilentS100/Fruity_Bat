@@ -68,7 +68,7 @@
 		text-align: center;
 		align-content: center;
 		font-family: 'Common Pixel', sans-serif;
-		                                           
+		                               
 	}
 </style>
 <body style="background-color: rgb(14, 5, 17); position: fixed;"></body>
@@ -91,8 +91,8 @@
 		<img id="para_down_1" class="pixilate para_1_css" src="{{ url_for('static',filename='grounds.png') }}">
 		<img id="para_down_2" class="pixilate para_2_css" src="{{ url_for('static',filename='grounds.png') }}">
 		
-		<img id="spike_up" class="spike_up_css pixilate" src="{{ url_for('static',filename='spike.png') }}">       
-		<img id="spike_down" class="spike_down_css pixilate" src="{{ url_for('static',filename='spike.png') }}">
+		<img id="spike_up" class="spike_up_css pixilate" src="https://fruity-bat-git-main-silents100.vercel.app/static/spike.png">       
+		<img id="spike_down" class="spike_down_css pixilate" src="https://fruity-bat-git-main-silents100.vercel.app/static/spike.png">
 		
 		<p id="score" class="score_css">0</p>
 	</div>
@@ -100,6 +100,8 @@
 	<div>     
 		<img id="player_hitbox" class="hitbox pixilate" src="{{ url_for('static',filename='bat_frame_0.png') }}">        
 		<img id="player" class="player_css pixilate" src="{{ url_for('static',filename='bat_frame_0.png') }}">         
+		<img id="player_frame_1" class="player_css pixilate" src="{{ url_for('static',filename='bat_frame_1.png') }}">         
+		<img id="player_frame_2" class="player_css pixilate" src="{{ url_for('static',filename='bat_frame_2.png') }}">         
 	</div>
 
 	<div>     
@@ -109,20 +111,30 @@
 	<script>
 		function animate_bat()
 		{
-			player.src = "{{ url_for('static',filename='bat_frame_1.png') }}"
-
+			player.style.visibility = "hidden"
+			player_frame_1.style.visibility = "visible"
+			
 			setTimeout(function(){
-				player.src = "{{ url_for('static',filename='bat_frame_2.png') }}"
+				player_frame_1.style.visibility = "hidden"
+				player_frame_2.style.visibility = "visible"
+			
+				setTimeout(function(){
+					player_frame_2.style.visibility = "hidden"
+					player_frame_1.style.visibility = "visible"
+					setTimeout(function(){
+						player_frame_1.style.visibility = "hidden"
+						player.style.visibility = "visible"
+					}, 100)		
+				}, 400)
 			}, 100)
-			setTimeout(function(){
-				player.src = "{{ url_for('static',filename='bat_frame_1.png') }}"
-			}, 500)
-			setTimeout(function(){
-				player.src = "{{ url_for('static',filename='bat_frame_0.png') }}"
-			}, 600)
+			
 		}
 		document.addEventListener("keydown", keyDownTextField, false);
 		const player    = document.getElementById('player');
+		const player_frame_1    = document.getElementById('player_frame_1');
+		const player_frame_2    = document.getElementById('player_frame_2');
+		player_frame_1.style.visibility = "hidden"
+		player_frame_2.style.visibility = "hidden"
 		const player_hitbox    = document.getElementById('player_hitbox');
 		const fruit     = document.getElementById('fruit')
 		const spike_up  = document.getElementById('spike_up')
@@ -312,9 +324,13 @@
 			{
 				lose()
 			}
-			player.style.top = Math.round(player_y) + "px"
-			player.style.left = Math.round(player_x)  + "px"
-
+			player.style.top = player_y + "px"
+			player.style.left = player_x  + "px"
+			player_frame_1.style.top = player_y + "px"
+			player_frame_1.style.left = player_x  + "px"
+			player_frame_2.style.top = player_y + "px"
+			player_frame_2.style.left = player_x  + "px"
+			
 			player_hitbox.style.top =  player_y + 10 + "px"
 			player_hitbox.style.left = player_x + 25 + "px"
 		}
@@ -375,7 +391,6 @@
 		for(var i = spikes.length - 1; i > -1; i--){
 			var element = spikes[i]
 			var rect = element.getBoundingClientRect();
-			console.log(rect.left, element.style.left)
 			element.style.left = rect.left + 32 - score / 4 - 2 + "px"
 			
 			if(rect.left < window.innerWidth/2 - 960){
