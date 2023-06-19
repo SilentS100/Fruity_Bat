@@ -71,8 +71,8 @@
 		                               
 	}
 </style>
-<body style="background-color: rgb(14, 5, 17); position: fixed;"></body>
 <html>
+	<body onclick="clicked()" style="background-color: rgb(14, 5, 17); position: fixed;"></body>
 	
 	
 	<div id="scene">     
@@ -235,7 +235,7 @@
 			if(!end)
 			{
 				animate_bat()
-				player_yv = -5	
+				clicked()
 			}
 			
 		}
@@ -263,6 +263,20 @@
 		}
 		*/
 		
+	}
+	function clicked()
+	{
+		if(!start)
+			{
+				start = true
+				var player_y  = window.innerHeight/2
+				score_text.textContent = score
+			}
+			if(!end)
+			{
+				animate_bat()
+				player_yv = -5
+			}	
 	}
 	function reset()
 	{
@@ -488,5 +502,6 @@
 	}
 	setTimeout(spawn_spike_helper, 3000);
 	</script>
+
 </html>
 
